@@ -6,38 +6,57 @@ package TreePkg {
 }
 
 // i don't like that you cannot bound the type of a generic parameter.
-// in this case i would like to bound polarity to a bool.
-module Tree::<InputWidth: const, Polarity: const> (
-    i_vals: input  logic<InputWidth> [8],
-    o_val : output logic<InputWidth>    ,
-    //   o_idx : output logic<4>    ,
+// in this case i would like to bound polarity to a the TreePolarity enum (or a bool).
+module Tree::<InputWidth: const, Polarity: const, InputSize: const> (
+    i_vals: input  logic<InputWidth>        [InputSize],
+    o_val : output logic<InputWidth>                   ,
+    o_idx : output logic<$clog2(InputSize)>            ,
 
 ) {
 
+    struct TreeItem {
+        val: logic<InputWidth>       ,
+        idx: logic<$clog2(InputSize)>,
+    }
+
     function max (
-        arr        : input logic<InputWidth> [8],
-        range_start: input u32                  ,
-        range_end  : input u32                  ,
-    ) -> logic<InputWidth> {
+        arr        : input logic<InputWidth>        [InputSize],
+        range_start: input logic<$clog2(InputSize)>            ,
+        range_end  : input logic<$clog2(InputSize)>            ,
+    ) -> TreeItem {
         if (range_end - range_start) >= 2 {
-            let middle: u32               = range_start + ((range_end - range_start) >> 1);
-            let left  : logic<InputWidth> = max(arr, range_start, middle);
-            let right : logic<InputWidth> = max(arr, middle + 1, range_end);
-            if (left >: right) == Polarity {
+            let middle: logic   <$clog2(InputSize)> = range_start + ((range_end - range_start) >> 1);
+            let left  : TreeItem                    = max(arr, range_start, middle);
+            let right : TreeItem                    = max(arr, middle + 1, range_end);
+            if (left.val >: right.val) == Polarity {
                 return left;
             } else {
                 return right;
             }
-            return right;
+            //return right;
         } else if (range_end - range_start == 1) {
             if (arr[range_start] >: arr[range_end]) == Polarity {
-                return arr[range_start];
+                var item    : TreeItem;
+                item.val = arr[range_start];
+                item.idx = range_start;
+                return item;
             } else {
-                return arr[range_end];
+                var item    : TreeItem;
+                item.val = arr[range_end];
+                item.idx = range_end;
+                return item;
             }
         } else {
-            return arr[range_start];
+            var item    : TreeItem;
+            item.val = arr[range_start];
+            item.idx = range_start;
+            return item;
         }
     }
-    assign o_val = max(i_vals, 0, $size(i_vals));
+    // Veryl does not support parentheses in type provided to `as`.
+    // This means we cannot do `as $clog2(InputSize)`, so we bind it to a const instead.
+    const idx_size: u32      = $clog2(InputSize);
+    let res     : TreeItem = max(i_vals, 0, (InputSize - 1) as idx_size);
+    assign o_val    = res.val;
+    assign o_idx    = res.idx;
 }

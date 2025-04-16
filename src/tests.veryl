@@ -1,23 +1,88 @@
 module test_module (
-    i_vals: input  logic<4> [8],
-    o_val : output logic<4>    ,
+    i_vals   : input  logic<3>         [8],
+    o_val_max: output logic<3>            ,
+    o_idx_max: output logic<$clog2(8)>    ,
+    o_val_min: output logic<3>            ,
+    o_idx_min: output logic<$clog2(8)>    ,
 ) {
-    inst tree: Tree::<4, TreePkg::TreePolarity::Min> (
-        i_vals  ,
-        o_val   ,
+    inst tree_max: Tree::<3, TreePkg::TreePolarity::Max, 8> (
+        i_vals           ,
+        o_val : o_val_max,
+        o_idx : o_idx_max,
+    );
+    inst tree_min: Tree::<3, TreePkg::TreePolarity::Min, 8> (
+        i_vals           ,
+        o_val : o_val_min,
+        o_idx : o_idx_min,
     );
 }
 
-#[test(generic_test)]
+#[test(test)]
 embed (inline) sv{{{
     module test;
-        logic[3:0] arr [8] = {1, 5, 3, 7, 8, 1, 2, 0};
-        logic[3:0] out;
-        hippo_tree_veryl_test_module dut (.i_vals(arr), .o_val(out));
+        logic[2:0] arr [8];
+        logic[2:0] o_val_max;
+        logic[2:0] o_idx_max;
+        logic[2:0] o_val_min;
+        logic[2:0] o_idx_min;
+        hippo_tree_veryl_test_module dut (.i_vals(arr), .o_val_max, .o_idx_max, .o_val_min, .o_idx_min);
         initial begin
-
+            arr = {0,2,5,1,3,4,7,6};
             #10;
-            
+            assert(o_val_max == 7);
+            assert(o_idx_max == 6);
+            assert(o_val_min == 0);
+            assert(o_idx_min == 0);
+
+            arr = {6,0,2,5,1,3,4,7};
+            #10;
+            assert(o_val_max == 7);
+            assert(o_idx_max == 7);
+            assert(o_val_min == 0);
+            assert(o_idx_min == 1);
+
+            arr = {7,6,0,2,5,1,3,4};
+            #10;
+            assert(o_val_max == 7);
+            assert(o_idx_max == 0);
+            assert(o_val_min == 0);
+            assert(o_idx_min == 2);
+
+            arr = {4,7,6,0,2,5,1,3};
+            #10;
+            assert(o_val_max == 7);
+            assert(o_idx_max == 1);
+            assert(o_val_min == 0);
+            assert(o_idx_min == 3);
+
+            arr = {3,4,7,6,0,2,5,1};
+            #10;
+            assert(o_val_max == 7);
+            assert(o_idx_max == 2);
+            assert(o_val_min == 0);
+            assert(o_idx_min == 4);
+
+            arr = {1,3,4,7,6,0,2,5};
+            #10;
+            assert(o_val_max == 7);
+            assert(o_idx_max == 3);
+            assert(o_val_min == 0);
+            assert(o_idx_min == 5);
+
+            arr = {5,1,3,4,7,6,0,2};
+            #10;
+            assert(o_val_max == 7);
+            assert(o_idx_max == 4);
+            assert(o_val_min == 0);
+            assert(o_idx_min == 6);
+
+            arr = {2,5,1,3,4,7,6,0};
+            #10;
+            assert(o_val_max == 7);
+            assert(o_idx_max == 5);
+            assert(o_val_min == 0);
+            assert(o_idx_min == 7);
+
             $finish;
         end
     endmodule
