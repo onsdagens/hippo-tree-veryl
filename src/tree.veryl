@@ -1,18 +1,18 @@
-module tree (
-    i_vals: input  logic<4> [8],
-    o_val : output logic<4>    ,
+module Tree::<InputWidth: const> (
+    i_vals: input  logic<InputWidth> [8],
+    o_val : output logic<InputWidth>    ,
     //   o_idx : output logic<4>    ,
 
 ) {
     function max (
-        arr        : input logic<4> [8],
-        range_start: input u32         ,
-        range_end  : input u32         ,
+        arr        : input logic<InputWidth> [8],
+        range_start: input u32                  ,
+        range_end  : input u32                  ,
     ) -> logic<4> {
         if (range_end - range_start) >= 2 {
-            let middle: u32      = range_start + ((range_end - range_start) >> 1);
-            let left  : logic<4> = max(arr, range_start, middle);
-            let right : logic<4> = max(arr, middle + 1, range_end);
+            let middle: u32               = range_start + ((range_end - range_start) >> 1);
+            let left  : logic<InputWidth> = max(arr, range_start, middle);
+            let right : logic<InputWidth> = max(arr, middle + 1, range_end);
             if ((left >: right)) {
                 return left;
             } else {
@@ -31,34 +31,3 @@ module tree (
     }
     assign o_val = max(i_vals, 0, $size(i_vals));
 }
-/*
-module recursive_mod (
-    a: input  logic<4>,
-    b: output logic<4>,
-) {
-    function recursive (
-        a: input logic<4>,
-    ) -> logic<4> {
-        if a >: 0 {
-            return recursive(a - 1);
-        } else {
-            return a;
-        }
-    }
-    assign b = recursive(a);
-}*/
-
-#[test(generic_test)]
-embed (inline) sv{{{
-    module test;
-        logic[3:0] arr [8] = {1, 5, 3, 7, 8, 1, 2, 0};
-        logic[3:0] out;
-        hippo_tree_veryl_tree dut (.i_vals(arr), .o_val(out));
-        initial begin
-
-            #10;
-            
-            $finish;
-        end
-    endmodule
-}}}

@@ -1,0 +1,24 @@
+module test_module (
+    i_vals: input  logic<4> [8],
+    o_val : output logic<4>    ,
+) {
+    inst tree: Tree::<4> (
+        i_vals  ,
+        o_val   ,
+    );
+}
+
+#[test(generic_test)]
+embed (inline) sv{{{
+    module test;
+        logic[3:0] arr [8] = {1, 5, 3, 7, 8, 1, 2, 0};
+        logic[3:0] out;
+        hippo_tree_veryl_test_module dut (.i_vals(arr), .o_val(out));
+        initial begin
+
+            #8;
+            
+            $finish;
+        end
+    endmodule
+}}}
