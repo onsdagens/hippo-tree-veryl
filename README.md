@@ -9,7 +9,7 @@ The original SystemVerilog implementation is available [here](https://github.com
 
 ## Building
 
-For transpiling to SystemVerilog, Veryl is required. An installation guide is available [here](https://veryl-lang.org/install/).
+For transpiling to SystemVerilog, [Veryl](https://github.com/veryl-lang/veryl) is required. The tree relies on recursive functions, which is new language feature, so the Veryl toolchain must be compiled from source. 
 
 With Veryl installed, transpiling can be done by 
 ```
