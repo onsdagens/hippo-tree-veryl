@@ -1,26 +1,36 @@
-module Tree::<InputWidth: const> (
+package TreePkg {
+    enum TreePolarity {
+        Min = 0,
+        Max = 1,
+    }
+}
+
+// i don't like that you cannot bound the type of a generic parameter.
+// in this case i would like to bound polarity to a bool.
+module Tree::<InputWidth: const, Polarity: const> (
     i_vals: input  logic<InputWidth> [8],
     o_val : output logic<InputWidth>    ,
     //   o_idx : output logic<4>    ,
 
 ) {
+
     function max (
         arr        : input logic<InputWidth> [8],
         range_start: input u32                  ,
         range_end  : input u32                  ,
-    ) -> logic<4> {
+    ) -> logic<InputWidth> {
         if (range_end - range_start) >= 2 {
             let middle: u32               = range_start + ((range_end - range_start) >> 1);
             let left  : logic<InputWidth> = max(arr, range_start, middle);
             let right : logic<InputWidth> = max(arr, middle + 1, range_end);
-            if ((left >: right)) {
+            if (left >: right) == Polarity {
                 return left;
             } else {
                 return right;
             }
             return right;
         } else if (range_end - range_start == 1) {
-            if (arr[range_start] >: arr[range_end]) {
+            if (arr[range_start] >: arr[range_end]) == Polarity {
                 return arr[range_start];
             } else {
                 return arr[range_end];

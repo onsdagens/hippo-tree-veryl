@@ -2,7 +2,7 @@ module test_module (
     i_vals: input  logic<4> [8],
     o_val : output logic<4>    ,
 ) {
-    inst tree: Tree::<4> (
+    inst tree: Tree::<4, TreePkg::TreePolarity::Min> (
         i_vals  ,
         o_val   ,
     );
