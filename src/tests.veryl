@@ -16,7 +16,7 @@ embed (inline) sv{{{
         hippo_tree_veryl_test_module dut (.i_vals(arr), .o_val(out));
         initial begin
 
-            #8;
+            #10;
             
             $finish;
         end

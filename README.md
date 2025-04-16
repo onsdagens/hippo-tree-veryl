@@ -23,7 +23,7 @@ which results in a `./src/tree.sv` file.
 
 ## Testing
 
-A simple testbench is included. For simulation, [Verilator] is required. An installation guide is available [here](https://verilator.org/guide/latest/install.html).
+A simple testbench is included in the `./src/tests.veryl` file. For simulation, [Verilator] is required. An installation guide is available [here](https://verilator.org/guide/latest/install.html).
 
 With Verilator and Veryl installed, the testbench can be ran using
 ```
