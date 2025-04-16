@@ -1,6 +1,5 @@
 # Hippomenes Tree
 
-## Description
 This is a pure Veryl implementation of an arbitration tree intended for the [Hippomenes](https://github.com/perlindgren/hippomenes) NCLIC interrupt controller.
 
 The tree takes an array of signals, and returns the *index* of the smallest/largest value. If only the actual underlying value is of interest,
