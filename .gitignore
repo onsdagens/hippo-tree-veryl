@@ -1,0 +1,8 @@
+.build/
+obj_dir/
+hippo_tree_veryl.f
+Veryl.lock
+dependencies/
+src/*.vcd
+src/*.sv
+src/*.map
